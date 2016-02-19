@@ -43,7 +43,7 @@ module Gamemaker::CardGame
       assert_from_json PlayingCard, { suit: "diamonds", rank: 3 }, PlayingCard.new(:diamonds, 3)
     end
 
-    test "PlayingCardTest.all returns an array of cards from the standard deck" do
+    test "PlayingCard.all returns an array of cards from the standard deck" do
       standard_cards = []
 
       SUITS.each do |suit|
@@ -53,6 +53,40 @@ module Gamemaker::CardGame
       end
 
       assert_equal standard_cards, PlayingCard.all
+    end
+
+    test "it has a simple to_s" do
+      ace_of_clubs = PlayingCard.new(:clubs, :ace)
+      assert_equal "♣A", ace_of_clubs.to_s
+      assert_equal "♣A", ace_of_clubs.to_s(:simple)
+
+      diamonds_10 = PlayingCard.new(:diamonds, 10)
+      assert_equal "♦10", diamonds_10.to_s
+      assert_equal "♦10", diamonds_10.to_s(:simple)
+    end
+
+    test "it has a fancy to_s" do
+      ace_of_clubs = PlayingCard.new(:clubs, :ace)
+      ace_of_clubs_fancy = "┌──┐\n" \
+                           "│♣A|\n" \
+                           "└──┘\n"
+
+      assert_equal ace_of_clubs_fancy, ace_of_clubs.to_s(:fancy)
+
+      diamonds_10 = PlayingCard.new(:diamonds, 10)
+      diamonds_10_fancy = "┌──┐\n" \
+                          "│♦10\n" \
+                          "└──┘\n"
+
+      assert_equal diamonds_10_fancy, diamonds_10.to_s(:fancy)
+    end
+
+    test "it has a unicode glyph to_s" do
+      ace_of_clubs = PlayingCard.new(:clubs, :ace)
+      assert_equal "🃑", ace_of_clubs.to_s(:glyph)
+
+      diamonds_10 = PlayingCard.new(:diamonds, 10)
+      assert_equal "🃊", diamonds_10.to_s(:glyph)
     end
 
     private
@@ -91,6 +125,62 @@ module Gamemaker::CardGame
     class PlayingCardDeckTest < Minitest::Test
       test "it produces the standard deck by default" do
         assert_equal PlayingCard.all, PlayingCardDeck.new.to_a
+      end
+    end
+
+    class PlayingCardHandTest < Minitest::Test
+      test "it produces an empty hand by default" do
+        assert_empty PlayingCardHand.new
+      end
+
+      test "it has a simple to_s" do
+        hand = PlayingCardHand.new([
+          PlayingCard.new(:clubs, :ace),
+          PlayingCard.new(:diamonds, 10),
+          PlayingCard.new(:spades, :king)
+        ])
+
+        assert_equal "♣A ♦10 ♠K", hand.to_s
+        assert_equal "♣A ♦10 ♠K", hand.to_s(:simple)
+        assert_equal "♣A, ♦10, ♠K", hand.to_s(:simple, seperator: ', ')
+      end
+
+      test "it has a fancy to_s" do
+        hand = PlayingCardHand.new([
+          PlayingCard.new(:clubs, :ace),
+          PlayingCard.new(:diamonds, 10),
+          PlayingCard.new(:spades, :king)
+        ])
+
+        expected = "┌──┐ ┌──┐ ┌──┐\n" \
+                   "│♣A| │♦10 │♠K|\n" \
+                   "└──┘ └──┘ └──┘\n"
+
+        assert_equal expected, hand.to_s(:fancy)
+
+        expected_with_seperator = "┌──┐  ┌──┐  ┌──┐\n" \
+                                  "│♣A|  │♦10  │♠K|\n" \
+                                  "└──┘, └──┘, └──┘\n"
+
+
+        assert_equal expected_with_seperator, hand.to_s(:fancy, seperator: ', ')
+
+        expected_with_seperators = "┌──┐   ┌──┐   ┌──┐\n" \
+                                   "│♣A| / │♦10 / │♠K|\n" \
+                                   "└──┘   └──┘   └──┘\n"
+
+        assert_equal expected_with_seperators, hand.to_s(:fancy, seperators: ['   ', ' / ', '   '])
+      end
+
+      test "it has a unicode glyph to_s" do
+        hand = PlayingCardHand.new([
+          PlayingCard.new(:clubs, :ace),
+          PlayingCard.new(:diamonds, 10),
+          PlayingCard.new(:spades, :king)
+        ])
+
+        assert_equal "🃑 🃊 🂮", hand.to_s(:glyph)
+        assert_equal "🃑, 🃊, 🂮", hand.to_s(:glyph, seperator: ', ')
       end
     end
   end
