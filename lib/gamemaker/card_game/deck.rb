@@ -30,6 +30,7 @@ module Gamemaker
 
       def shuffle!
         @cards.shuffle!
+        self
       end
 
       def draw(n = nil)
@@ -49,6 +50,33 @@ module Gamemaker
       end
 
       alias_method :take!, :draw!
+
+      def put(*cards, position: :bottom)
+        case position
+        when :top
+          undraw(*cards)
+        when :bottom
+          self << cards
+        else
+          raise ArgumentError, "Cannot put cards to #{position.inspect}"
+        end
+      end
+
+      def <<(*cards)
+        @cards.concat(cards.flatten)
+        self
+      end
+
+      def undraw(*cards)
+        @cards = cards.flatten + @cards
+        self
+      end
+
+      alias_method :untake, :undraw
+
+      def merge!(other)
+        self << other.draw(other.length)
+      end
 
       def to_a
         @cards.dup
