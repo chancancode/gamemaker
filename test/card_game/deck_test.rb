@@ -72,7 +72,7 @@ module Gamemaker::CardGame
 
       assert_equal standard_deck, test_deck
 
-      test_deck.shuffle!
+      test_deck.shuffle
 
       assert_equal 9, test_deck.length
       refute_equal standard_deck, test_deck
@@ -275,7 +275,7 @@ module Gamemaker::CardGame
         NumberCard.new(6)
       ])
 
-      deck.merge!(discard_pile)
+      deck.merge(discard_pile)
 
       expected = DeckOfNumberCards.new([
         NumberCard.new(7),

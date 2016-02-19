@@ -28,7 +28,7 @@ module Gamemaker
         @cards.empty?
       end
 
-      def shuffle!
+      def shuffle
         @cards.shuffle!
         self
       end
@@ -74,7 +74,7 @@ module Gamemaker
 
       alias_method :untake, :undraw
 
-      def merge!(other)
+      def merge(other)
         self << other.draw(other.length)
       end
 
