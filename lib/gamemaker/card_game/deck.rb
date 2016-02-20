@@ -41,9 +41,9 @@ module Gamemaker
 
       def draw!(n = nil)
         if n && n > @cards.length
-          raise IndexError, "Cannot draw #{n} cards from the deck: only #{@cards.length} cards left"
+          raise IndexError, "Tried to draw #{n} cards when there were only #{@cards.length} cards left"
         elsif !n && empty?
-          raise IndexError, "Cannot draw from the deck: no cards left"
+          raise IndexError, "Tried to draw a card when there were no cards left"
         else
           draw(n)
         end

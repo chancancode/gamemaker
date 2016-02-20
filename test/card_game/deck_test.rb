@@ -153,7 +153,7 @@ module Gamemaker::CardGame
       assert_empty deck
     end
 
-    test "Card#draw! raises when over-drawing" do
+    test "Deck#draw! protects from over-drawing" do
       deck = DeckOfNumberCards.new([
         NumberCard.new(3),
         NumberCard.new(1),
